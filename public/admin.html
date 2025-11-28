@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - E-Delivery</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container" style="padding-top:20px;">
+    <div class="top-bar">
+      <h2>E-Delivery Admin Dashboard</h2>
+      <button id="logout-btn">Logout</button>
+    </div>
+
+    <div class="card">
+      <h3>Current User</h3>
+      <pre id="me">Loading...</pre>
+    </div>
+
+    <div class="card">
+      <h3>Create Driver</h3>
+      <input id="driver-name" placeholder="Driver name">
+      <input id="driver-notes" placeholder="Notes (vehicle, route, etc)">
+      <button id="create-driver-btn">Create Driver</button>
+      <pre id="driver-result"></pre>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content: space-between; align-items:center;">
+        <h3>Drivers</h3>
+        <button id="refresh-drivers">Refresh</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Notes</th><th>Magic Link</th></tr>
+        </thead>
+        <tbody id="drivers-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Create Delivery from Invoice</h3>
+      <input id="cust-name" placeholder="Customer Name">
+      <input id="invoice-number" placeholder="Invoice Number">
+      <input id="order-ref" placeholder="Order Ref (optional)">
+      <input id="delivery-datetime" type="datetime-local" placeholder="Delivery Date/Time (optional)">
+      <textarea id="delivery-notes" placeholder="Notes"></textarea>
+      <label for="assigned-driver">Assign Driver (optional)</label>
+      <select id="assigned-driver">
+        <option value="">-- select driver --</option>
+      </select>
+      <small>Use the driver table above to copy magic links.</small>
+      <textarea id="items-json" rows="4" placeholder='Items JSON e.g. [{"name":"Boxes","qty":3}]'></textarea>
+      <button id="create-delivery-btn">Create Delivery</button>
+      <pre id="delivery-create-result"></pre>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content: space-between; align-items:center;">
+        <h3>Deliveries</h3>
+        <button id="refresh-deliveries">Refresh</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Customer</th><th>Invoice</th><th>Status</th><th>Driver</th><th>Created</th></tr>
+        </thead>
+        <tbody id="deliveries-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
