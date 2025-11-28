@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String     @id @default(cuid())
+  role        String
+  email       String?    @unique
+  name        String?
+  notes       String?
+  magicToken  String?
+  deliveries  Delivery[] @relation("DriverDeliveries")
+}
+
+model Delivery {
+  id               String         @id @default(cuid())
+  customerName     String
+  invoiceNumber    String
+  orderRef         String?
+  deliveryDateTime DateTime?
+  notes            String?
+  status           String
+  invoiceFilePath  String?
+  photoPath        String?
+  signaturePath    String?
+  createdAt        DateTime       @default(now())
+  deliveredAt      DateTime?
+  assignedDriverId String?
+  assignedDriver   User?          @relation("DriverDeliveries", fields: [assignedDriverId], references: [id])
+  items            DeliveryItem[]
+}
+
+model DeliveryItem {
+  id          String   @id @default(cuid())
+  name        String
+  qty         Int
+  deliveredQty Int?
+  deliveryId  String
+  delivery    Delivery @relation(fields: [deliveryId], references: [id])
+}

@@ -1,0 +1,186 @@
+openapi: 3.0.1
+info:
+  title: E-Delivery API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /auth/login:
+    post:
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200': { description: Login success }
+        '401': { description: Invalid credentials }
+  /auth/me:
+    get:
+      summary: Current user
+      security: [{ cookieAuth: [] }]
+      responses:
+        '200': { description: User info }
+        '401': { description: Unauthorized }
+  /auth/logout:
+    post:
+      summary: Logout
+      security: [{ cookieAuth: [] }]
+      responses:
+        '200': { description: Logged out }
+  /api/drivers:
+    get:
+      summary: List drivers
+      security: [{ cookieAuth: [] }]
+      responses:
+        '200': { description: Drivers list }
+    post:
+      summary: Create driver
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                notes: { type: string }
+      responses:
+        '200': { description: Driver created }
+  /magic-login/{token}:
+    get:
+      summary: Magic link login for drivers
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      responses:
+        '302': { description: Sets cookie then redirects to driver-home }
+        '404': { description: Invalid link }
+  /driver-home:
+    get:
+      summary: Simple driver landing
+      security: [{ cookieAuth: [] }]
+      responses:
+        '200': { description: HTML page }
+  /my-deliveries:
+    get:
+      summary: Deliveries for logged-in driver
+      security: [{ cookieAuth: [] }]
+      responses:
+        '200': { description: List of deliveries }
+  /api/invoices:
+    post:
+      summary: Create delivery from invoice JSON
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoicePayload'
+      responses:
+        '201': { description: Delivery created }
+  /api/invoices/upload:
+    post:
+      summary: Create delivery with uploaded invoice
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                customerName: { type: string }
+                invoiceNumber: { type: string }
+                items: { type: string, description: JSON string array }
+                orderRef: { type: string }
+                deliveryDateTime: { type: string, format: date-time }
+                notes: { type: string }
+                assignedDriverId: { type: string }
+                invoiceFile:
+                  type: string
+                  format: binary
+      responses:
+        '201': { description: Delivery created }
+  /api/deliveries:
+    get:
+      summary: List deliveries
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: driverId
+          schema: { type: string }
+      responses:
+        '200': { description: Deliveries }
+  /api/deliveries/{id}:
+    get:
+      summary: Get delivery
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Delivery details }
+        '404': { description: Not found }
+  /api/deliveries/{id}/confirm:
+    post:
+      summary: Driver confirms delivery
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                items: { type: string, description: JSON string array of delivered quantities }
+                photo: { type: string, format: binary }
+                signatureDataUrl: { type: string }
+      responses:
+        '200': { description: Delivery updated }
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: authToken
+  schemas:
+    InvoiceItem:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        qty: { type: integer }
+    InvoicePayload:
+      type: object
+      properties:
+        customerName: { type: string }
+        invoiceNumber: { type: string }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/InvoiceItem' }
+        orderRef: { type: string }
+        deliveryDateTime: { type: string, format: date-time }
+        notes: { type: string }
+        assignedDriverId: { type: string }

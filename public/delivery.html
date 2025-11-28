@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Confirmation - E-Delivery</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container" style="padding-top:20px;">
+    <div class="card">
+      <h2>Delivery Confirmation</h2>
+      <p id="delivery-info">Loading...</p>
+      <table id="items-table"></table>
+      <div style="margin-top:10px;">
+        <label>Upload Delivery Photo:</label>
+        <input id="photo" type="file" accept="image/*" capture="environment">
+      </div>
+      <div style="margin-top:10px;">
+        <label>Customer Signature:</label>
+        <canvas id="signature-pad"></canvas><br>
+        <button id="clear-signature" class="secondary">Clear Signature</button>
+      </div>
+      <button id="submit-btn" style="margin-top:14px;">Confirm Delivery</button>
+      <p id="status" class="status"></p>
+    </div>
+  </div>
+  <script src="/js/delivery.js"></script>
+</body>
+</html>
